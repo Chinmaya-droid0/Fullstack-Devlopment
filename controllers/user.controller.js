@@ -30,10 +30,25 @@
         }
 
         const token = crypto.randomBytes(32).toString("hex");
-        const tokenExpiry = new Date.now()+ 10*60*60*1000;
+        const tokenExpiry = new Date.now()+ 10*60*60*1000;  // Expiry Time 10 mins
 
-        
+        // Create a user database
+       const user = await User.create({
+            name,
+            email,
+            password,
+            verificationToken: token,
+            verificationTokenExpiry: tokenExpiry,
+       })
 
+       if(!user) {
+        return res.status(400).json({
+            success: false,
+            message: 'User not Created'
+        });
+       }
+     
+       // SendMail    
     }
     catch(error){
 
