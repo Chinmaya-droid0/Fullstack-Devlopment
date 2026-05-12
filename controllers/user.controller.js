@@ -1,6 +1,7 @@
  import User from "../models/user.model.js"
  import crypto from "crypto";
  import sendVerificationEmail from "../utils/sendMail.js";
+ import jwt from 'jsonwebtoken';
  
  const register = async (req , res) =>{
     const {name, email, password} = req.body;
@@ -15,7 +16,7 @@
     if(password.length < 6) {
         return res.status(400).json({
             success: false,
-            message: "Password is not valid"
+            message: "Password is not valid",
         })
     }
 
@@ -31,7 +32,7 @@
         }
 
         const token = crypto.randomBytes(32).toString("hex");
-        const tokenExpiry = new Date.now()+ 10*60*60*1000;  // Expiry Time 10 mins
+        const tokenExpiry = Date.now()+ 10*60*1000;  // Expiry Time 10 mins
 
         // Create a user database
        const user = await User.create({
@@ -59,9 +60,10 @@
        })
     }
     catch(error){
+        console.error("REGISTER ERROR >>>", error);
       return res.status(500).json({
-        success:true,
-        messsage:"Internal server Error"
+        success:false,
+        message:"Internal server Error"
       });
     }
 }; 
@@ -131,14 +133,14 @@ const verify = async (req, res) =>{
             if(!user.isVerified){
                 return res.status(400).json({
                 success:false,
-                message: "User not found",
+                message: "please verify your email before logging in",
             });
         }
 
          // Check password
          const isPasswordMatch = await user.comparePassword(password);
          if(!isPasswordMatch){
-               return res.status(200).json({
+               return res.status(401).json({
                 success: false,
                 message: "Password is not correct",
                });
@@ -164,6 +166,7 @@ const verify = async (req, res) =>{
 
 
      } catch (error) {
+         
         return res.status(500).json({
             success: true,
             message: "Interval server error",
@@ -172,4 +175,4 @@ const verify = async (req, res) =>{
    }
 
 
-export {register, verify };
+export {register, verify, login };
