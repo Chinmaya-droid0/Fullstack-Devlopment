@@ -1,7 +1,10 @@
+import dotenv from'dotenv';
+dotenv.config();
+
 import './config.js'
 import express from'express';
 import cors from'cors';
-import dotenv from'dotenv';
+import cookieParser from 'cookie-parser'
 import db from'./utils/db.js';
 import userRoutes from "./routes/user.route.js"
 
@@ -12,8 +15,9 @@ const app = express()
 const port = process.env.PORT || 4000;
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+app.use(cookieParser());
 app.use(cors({
-     origin: "*",
+     origin: "http://localhost:3000",
      credentials: true,
      methods: ['GET', 'POST', 'PUT', 'DELETE'],
      allowedHeaders: ['Content-Type', 'Authorization']
@@ -25,7 +29,7 @@ app.get('/', (req, res) => {
 
 app.use("/api/v1/users", userRoutes);
 
-dotenv.config();
+
 
 db();
 app.listen(port, () => {

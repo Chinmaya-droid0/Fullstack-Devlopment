@@ -153,7 +153,7 @@ const verify = async (req, res) =>{
 
           // Set Cookies
          const cookieOptions = {
-            expires: new Date(Date.now() + 24* 60* 60* 1000),
+            expires: new Date(Date.now() + 15* 60* 1000),
             httpOnly: true, // XSS attacks
          }
 
@@ -169,7 +169,7 @@ const verify = async (req, res) =>{
          
         return res.status(500).json({
             success: true,
-            message: "Interval server error",
+            message: "Internal server error",
         });
      }
    }
